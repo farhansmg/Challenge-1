@@ -18,12 +18,17 @@ sc.setLogLevel('WARN')
 
 # Business dataset is a nested json. So, here I'm propose 2 ways
 df_business = spark.read.json("yelp_dataset/yelp_academic_dataset_business.json")
-# First, this is my choice and for challenge purpose, I'm extracting the struct type so we still get the key inside of the struct
+# First, this is my choice and for challenge purpose, I'm extracting the struct type so we still get the key inside of the struct, load it intu different areas
 # for the raw table schema i'll show it at the end of this code
 # And yes, I'm saving it to staging area which is s3
-df_business.select(df_business['*'], col("attributes.*"), col("hours.*"))\
-            .drop("attributes", "hours").repartition(50).write.mode("overwrite")\
-            .option('header','true').csv("s3a://yelp_dataset/yelp_dataset_business_csv/")
+df_business.drop("attributes", "hours").repartition(50).write.mode("overwrite")\
+            .option('header','true').csv("yelp_dataset/yelp_dataset_business_csv/")
+df_business.select(col("attributes.*"))\
+            .repartition(50).write.mode("overwrite")\
+            .option('header','true').csv("yelp_dataset/yelp_dataset_attributes_csv/")
+df_business.select(col("hours.*"))\
+            .repartition(50).write.mode("overwrite")\
+            .option('header','true').csv("yelp_dataset/yelp_dataset_hours_csv/")
 # Second, you can get the data as raw as possible by cast it to string, but you will sacrifice your key inside the struct type
 # df_business.withColumn("attributes_string", col("attributes").cast("string"))\
 #                 .withColumn("hours_string", col("hours").cast("string"))\
