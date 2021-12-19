@@ -23,10 +23,10 @@ df_business = spark.read.json("yelp_dataset/yelp_academic_dataset_business.json"
 # And yes, I'm saving it to staging area which is s3
 df_business.drop("attributes", "hours").repartition(50).write.mode("overwrite")\
             .option('header','true').csv("yelp_dataset/yelp_dataset_business_csv/")
-df_business.select(col("attributes.*"))\
+df_business.select(col("attributes.*"), col("business_id"))\
             .repartition(50).write.mode("overwrite")\
             .option('header','true').csv("yelp_dataset/yelp_dataset_attributes_csv/")
-df_business.select(col("hours.*"))\
+df_business.select(col("hours.*"), col("business_id"))\
             .repartition(50).write.mode("overwrite")\
             .option('header','true').csv("yelp_dataset/yelp_dataset_hours_csv/")
 # Second, you can get the data as raw as possible by cast it to string, but you will sacrifice your key inside the struct type
