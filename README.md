@@ -16,3 +16,4 @@ and docker_postgres_init.sql was on the same dir.
 
 question no.7, you have submit migrate_ods.py into spark
 question no.8, same as number 7 because my staging area was an object file system so I'm not extract it from database's object but from the file it self.
+question no.10, I prefered using spark instead of sql query because limitation of my resource so it's not possible to just using sql (if using bigquery / reshift it would not be an issue)
